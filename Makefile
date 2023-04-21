@@ -2,16 +2,28 @@ CC=cc
 AR=ar
 CFLAGS=-Wall -Wextra -std=c89 -Wpedantic -O3 -I./include/ -fPIC
 DEBUGFLAGS=-ggdb
-LIBDIR=./lib
-STATIC=$(LIBDIR)/cstr.a
-SHARED=$(LIBDIR)/cstr.so
+TARGET=./lib
+STATIC=libcstr.a
+SHARED=libcstr.so
 
-all: $(LIBDIR) $(STATIC) $(SHARED)
+include config.mk
 
-$(STATIC): src/mem.o src/str.o src/utf.o
-	ar rcs $(STATIC) $^
+all: $(TARGET) $(TARGET)/$(STATIC) $(TARGET)/$(SHARED)
 
-$(SHARED): src/mem.o src/str.o src/utf.o
+install: all
+	install $(TARGET)/$(STATIC) $(LIBDIR)
+	install $(TARGET)/$(SHARED) $(LIBDIR)
+	cp ./include/cstr.h $(INCDIR)
+
+uninstall:
+	rm -i $(LIBDIR)/$(STATIC)
+	rm -i $(LIBDIR)/$(SHARED)
+	rm -i $(INCDIR)/cstr.h
+
+$(TARGET)/$(STATIC): src/mem.o src/str.o src/utf.o
+	ar rcs $(TARGET)/$(STATIC) $^
+
+$(TARGET)/$(SHARED): src/mem.o src/str.o src/utf.o
 	cc -shared $(CFLAGS) -o $@ $^
 
 src/str.o: src/str.c
@@ -23,8 +35,8 @@ src/mem.o: src/mem.c
 src/utf.o: src/utf.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-$(LIBDIR):
-	mkdir $(LIBDIR)
+$(TARGET):
+	mkdir $(TARGET)
 
 clean:
 	rm ./src/*.o
