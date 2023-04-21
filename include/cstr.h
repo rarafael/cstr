@@ -53,9 +53,14 @@ extern void cstr_free(cstr s);
  * returns s.buf */
 extern char *cstr_buf(const cstr s);
 
-/* cstr_len: get cstr length
+/* cstr_size: get cstr buffer size
  *
  * return s.len */
+extern size_t cstr_size(const cstr s);
+
+/* cstr_len: get length in characters
+ *
+ * returns character count, same as cstr_utf_len() */
 extern size_t cstr_len(const cstr s);
 
 /* cstr_dup: duplicate cstr
@@ -88,5 +93,27 @@ extern void cstr_cat(cstr *s1, const cstr s2);
  *
  * concatenates NULSTR into S1 */
 extern void cstr_catstr(cstr *s1, const char *nulstr);
+
+/* cstr_utf_len: gets character length from utf8
+ *
+ * returns length of characters in utf8 from S */
+extern size_t cstr_utf_len(const cstr s);
+
+/* cstr_ncpy: copy a cstr into another with max
+ *
+ * copy S2 into S1 from beginning up until MAX characters
+ * if MAX is greater than S2 length, copy all of S2
+ * if MAX is greater than S1 length, reallocate S1 to fit */
+extern void cstr_ncpy(cstr *s1, const cstr s2, size_t max);
+
+/* cstr_cpy: copy a cstr into another
+ *
+ * copy S2 into S1 */
+extern void cstr_cpy(cstr *s1, const cstr s2);
+
+/* cstr_cpystr: copy null-terminated string into cstr
+ *
+ * copies NULSTR into S1 */
+extern void cstr_cpystr(cstr *s1, const char *nulstr);
 
 #endif

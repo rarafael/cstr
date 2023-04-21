@@ -8,16 +8,19 @@ SHARED=$(LIBDIR)/cstr.so
 
 all: $(LIBDIR) $(STATIC) $(SHARED)
 
-$(STATIC): src/mem.o src/str.o
+$(STATIC): src/mem.o src/str.o src/utf.o
 	ar rcs $(STATIC) $^
 
-$(SHARED): src/mem.o src/str.o
+$(SHARED): src/mem.o src/str.o src/utf.o
 	cc -shared $(CFLAGS) -o $@ $^
 
 src/str.o: src/str.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 src/mem.o: src/mem.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+src/utf.o: src/utf.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 $(LIBDIR):

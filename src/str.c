@@ -2,6 +2,7 @@
 
 #include "str.h"
 #include "mem.h"
+#include "utf.h"
 
 cstr cstr_newarr(const char *arr, const size_t size)
 {
@@ -36,6 +37,11 @@ cstr cstr_new(const char *nulstr)
 }
 
 size_t cstr_len(const cstr s)
+{
+    return cstr_utf_len(s);
+}
+
+size_t cstr_size(const cstr s)
 {
     return s.len;
 }
@@ -109,5 +115,34 @@ void cstr_catstr(cstr *s1, const char *nulstr)
     cstr tmp;
     tmp = cstr_new(nulstr);
     cstr_cat(s1, tmp);
+    cstr_free(tmp);
+}
+
+void cstr_ncpy(cstr *s1, const cstr s2, size_t max)
+{
+    size_t i;
+
+    if(max >= s2.len)
+        max = s2.len;
+    if(max > s1->len) {
+        s1->len = max;
+        s1->buf = erealloc(s1->buf, s1->len);
+    }
+
+    for(i = 0; i < max; i++) {
+        s1->buf[i] = s2.buf[i];
+    }
+}
+
+void cstr_cpy(cstr *s1, const cstr s2)
+{
+    cstr_ncpy(s1, s2, s2.len);
+}
+
+void cstr_cpystr(cstr *s1, const char *nulstr)
+{
+    cstr tmp;
+    tmp = cstr_new(nulstr);
+    cstr_cpy(s1, tmp);
     cstr_free(tmp);
 }
