@@ -94,11 +94,6 @@ extern void cstr_cat(cstr *s1, const cstr s2);
  * concatenates NULSTR into S1 */
 extern void cstr_catstr(cstr *s1, const char *nulstr);
 
-/* cstr_utf_len: gets character length from utf8
- *
- * returns length of characters in utf8 from S */
-extern size_t cstr_utf_len(const cstr s);
-
 /* cstr_ncpy: copy a cstr into another with max
  *
  * copy S2 into S1 from beginning up until MAX characters
@@ -115,5 +110,16 @@ extern void cstr_cpy(cstr *s1, const cstr s2);
  *
  * copies NULSTR into S1 */
 extern void cstr_cpystr(cstr *s1, const char *nulstr);
+
+/* cstr_utf_len: gets character length from utf8
+ *
+ * returns length of characters in utf8 from S */
+extern size_t cstr_utf_len(const cstr s);
+
+/* cstr_utf_chrindex: returns memory index to character
+ *
+ * returns the memory index in cstr S to character of number CHR,
+ * count starts at 1 */
+extern size_t cstr_utf_chrindex(const cstr s, const size_t chr);
 
 #endif
