@@ -33,11 +33,20 @@ typedef struct cstr {
 
 /* cstr_newarr: create cstr from array 
  *
- * creates a new cstr with data from ARR and of length SIZE 
- * if either arguments are 0, return an empty cstr */
+ * arr: pointer to char array to source from
+ * size: size of array
+ *
+ * returns: generated cstr, must be freed with cstr_free()
+ *
+ * returns a cstr sourced from array 'arr' and of size 'size + 1'
+ * if either arr or size are 0, return an empty cstr */
 extern cstr cstr_newarr(const char *arr, const size_t size);
 
 /* cstr_new: create cstr from null-terminated string
+ * 
+ * nulstr: pointer to null-terminated string
+ *
+ * returns: generated cstr, must be freed with cstr_free()
  *
  * creates a new cstr from a standard null-terminated string
  * if nulstr is NULL, return empty cstr */
@@ -45,81 +54,145 @@ extern cstr cstr_new(const char *nulstr);
 
 /* cstr_free: frees a cstr
  *
+ * s: cstr to be freed
+ *
  * frees cstr buffer and resets the length */
-extern void cstr_free(cstr s);
+extern void cstr_free(cstr *s);
 
 /* cstr_buf: get cstr buffer
  *
- * returns s.buf */
+ * s: cstr to get buffer from
+ *
+ * returns: null-terminated char buffer (s.buf) */
 extern char *cstr_buf(const cstr s);
 
 /* cstr_size: get cstr buffer size
  *
- * return s.len */
+ * s: cstr to get size from
+ *
+ * returns: size of string in bytes (s.len);
+ *          accounts for null-terminating byte */
 extern size_t cstr_size(const cstr s);
 
 /* cstr_len: get length in characters
  *
- * returns character count, same as cstr_utf_len() */
+ * s: cstr to get length from
+ *
+ * returns: character count, same as cstr_utf_len();
+ *          doesn't count whitespace characters */
 extern size_t cstr_len(const cstr s);
 
 /* cstr_dup: duplicate cstr
  *
- * creates a duplicate cstr from argument S */
+ * s: cstr to be duplicated
+ *
+ * returns: a duplicate of s, to be freed with cstr_free() */
 extern cstr cstr_dup(const cstr s);
 
 /* cstr_ncmp: compares 2 cstrs with limit
  *
- * compares S1 to S2 up to MAX characters
- * if MAX is greater than length of the 2, compares up to the largest length */
+ * s1: reference cstr
+ * s2: cstr to be compared
+ * max: max amount of characters to compare in bytes
+ *
+ * returns: number of sequential equal bytes 
+ *
+ * compares 2 cstrs up to 'max' bytes, with 's1' as the reference point;
+ * if either of the cstr's length is 0, or 'max' is 0, return 0;
+ * if 'max' is greater than any of the cstr's length, compare up to the
+ * greatest length between the two */
 extern size_t cstr_ncmp(const cstr s1, const cstr s2, size_t max);
 
 /* cstr_cmp: compares 2 cstrs
  *
- * compares S1 to S2 up to the biggest's length */
+ * s1: reference cstr
+ * s2: cstr to be compared
+ *
+ * returns: number of sequential equal bytes
+ *
+ * compares 2 cstrs, with 's1' as the reference string, up to the biggest's
+ * length */
 extern size_t cstr_cmp(const cstr s1, const cstr s2);
 
-/* cstr_ncat: concatenates 2 cstrs
+/* cstr_cmpstr: compares cstr with null-terminated string
  *
- * concatenates S2 into S1 up to MAX size */
+ * s: reference cstr
+ * nulstr: null-terminated string
+ *
+ * returns: number of sequential equal bytes
+ *
+ * compares with 's' as the reference string */
+extern size_t cstr_cmpstr(const cstr s, const char *nulstr);
+
+/* cstr_ncat: concatenates 2 cstrs with limit
+ *
+ * s1: cstr to be concatenated
+ * s2: end string
+ * max: max amount of bytes to add
+ * 
+ * concatenates 's2' into 's1' up to max characters of s2;
+ * if max is greater than s2's length, concatenate up to it */
 extern void cstr_ncat(cstr *s1, const cstr s2, size_t max);
 
 /* cstr_cat: concatenates 2 cstrs
  *
- * concatenates all of S2 into S1 */
+ * s1: cstr to be concatenated
+ * s2: end string
+ *
+ * concatenates all of 's2' to the end of 's1', same as
+ * "cstr_ncat(s1, s2, s2.len) */
 extern void cstr_cat(cstr *s1, const cstr s2);
 
 /* cstr_catstr: concatenates null-terminated string into cstr
  *
- * concatenates NULSTR into S1 */
-extern void cstr_catstr(cstr *s1, const char *nulstr);
+ * s: cstr to be concatenated
+ * nulstr: null-terminated end string
+ *
+ * concatenates all of 'nulstr' into cstr 's' */
+extern void cstr_catstr(cstr *s, const char *nulstr);
 
 /* cstr_ncpy: copy a cstr into another with max
  *
- * copy S2 into S1 from beginning up until MAX characters
- * if MAX is greater than S2 length, copy all of S2
- * if MAX is greater than S1 length, reallocate S1 to fit */
+ * s1: cstr to be overwritten
+ * s2: reference
+ * max: max amount of bytes to overwrite
+ *
+ * copy 's2' into 's1' from index 0 up to 'max' bytes;
+ * if max is greater than s2, copy over all of s2;
+ * if s1 is not big enough to fit all of s2, reallocate it's buffer */
 extern void cstr_ncpy(cstr *s1, const cstr s2, size_t max);
 
 /* cstr_cpy: copy a cstr into another
  *
- * copy S2 into S1 */
+ * s1: cstr to be overwritten
+ * s2: reference
+ *
+ * copy all of 's2' into 's1', same as "cstr_ncpy(s1, s2, s2.len)" */
 extern void cstr_cpy(cstr *s1, const cstr s2);
 
 /* cstr_cpystr: copy null-terminated string into cstr
  *
- * copies NULSTR into S1 */
-extern void cstr_cpystr(cstr *s1, const char *nulstr);
-
-/* cstr_utf_len: gets character length from utf8
+ * s: cstr to be overwritten
+ * nulstr: reference null-terminated string
  *
- * returns length of characters in utf8 from S */
+ * copies all of 'nulstr' into cstr 's' */
+extern void cstr_cpystr(cstr *s, const char *nulstr);
+
+/* cstr_utf_len: gets length in characters from UTF-8
+ *
+ * s: cstr to get length from
+ *
+ * returns character count in UTF-8 from 's',
+ * does not count whitespace characters */
 extern size_t cstr_utf_len(const cstr s);
 
 /* cstr_utf_chrindex: returns memory index to character
  *
- * returns the memory index in cstr S to character of number CHR,
- * count starts at 1 */
+ * s: cstr to get index from
+ * chr: UTF-8 character index reference
+ *
+ * returns the memory index in cstr 's' to UTF-8 character of index 'chr',
+ * as returned by cstr_utf_len() */
 extern size_t cstr_utf_chrindex(const cstr s, const size_t chr);
 
 #endif
