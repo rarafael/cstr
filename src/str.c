@@ -89,7 +89,7 @@ size_t cstr_cmpstr(const cstr s, const char *nulstr)
     cstr tmp;
 
     tmp = cstr_new(nulstr);
-    ret = cstr_cmp(s1, tmp);
+    ret = cstr_cmp(s, tmp);
     cstr_free(&tmp);
     return ret;
 }
