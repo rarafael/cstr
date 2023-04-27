@@ -3,10 +3,13 @@
 
 #include <stddef.h>
 
-typedef struct cstr {
-    size_t len;
-    char *buf;
-} cstr;
+#ifndef _HAS_DEFINED_CSTR_
+#define _HAS_DEFINED_CSTR_
+    typedef struct cstr {
+        size_t len;
+        unsigned char *buf;
+    } cstr;
+#endif
 
 cstr cstr_newarr(const char *arr, const size_t size);
 cstr cstr_new(const char *nulstr);

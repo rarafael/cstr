@@ -26,10 +26,13 @@
 
 #include <stddef.h>
 
-typedef struct cstr {
-    size_t len;
-    char *buf;
-} cstr;
+#ifndef _HAS_DEFINED_CSTR_
+#define _HAS_DEFINED_CSTR_
+    typedef struct cstr {
+        size_t len;
+        unsigned char *buf;
+    } cstr;
+#endif
 
 /* cstr_newarr: create cstr from array 
  *
@@ -78,8 +81,7 @@ extern size_t cstr_size(const cstr s);
  *
  * s: cstr to get length from
  *
- * returns: character count, same as cstr_utf_len();
- *          doesn't count whitespace characters */
+ * returns: character count, same as cstr_utf_len() */
 extern size_t cstr_len(const cstr s);
 
 /* cstr_dup: duplicate cstr
@@ -182,8 +184,7 @@ extern void cstr_cpystr(cstr *s, const char *nulstr);
  *
  * s: cstr to get length from
  *
- * returns character count in UTF-8 from 's',
- * does not count whitespace characters */
+ * returns character count in UTF-8 from 's' */
 extern size_t cstr_utf_len(const cstr s);
 
 /* cstr_utf_chrindex: returns memory index to character

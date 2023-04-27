@@ -16,7 +16,7 @@ cstr cstr_newarr(const char *arr, const size_t size)
     ret.buf = ecalloc(ret.len, sizeof(char));
 
     for(i = 0; i < size; i++) {
-        ret.buf[i] = arr[i];
+        ret.buf[i] = (unsigned char)arr[i];
     }
 
     ret.buf[ret.len - 1] = '\0';
@@ -48,12 +48,12 @@ size_t cstr_size(const cstr s)
 
 char *cstr_buf(const cstr s)
 {
-    return s.buf;
+    return (char*)s.buf;
 }
 
 cstr cstr_dup(const cstr s)
 {
-    return cstr_newarr(s.buf, s.len);
+    return cstr_newarr((char*)s.buf, s.len);
 }
 
 size_t cstr_ncmp(const cstr s1, const cstr s2, size_t max)

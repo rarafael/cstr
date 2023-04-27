@@ -1,12 +1,13 @@
+include config.mk
+
 CC=cc
 AR=ar
-CFLAGS=-Wall -Wextra -std=c89 -Wpedantic -O3 -I./include/ -fPIC
+CFLAGS=-Wall -Wextra -std=c99 -Wpedantic -O3 -I./include/ -fPIC
 DEBUGFLAGS=-ggdb
 TARGET=./lib
+VERSION=1
 STATIC=libcstr.a
-SHARED=libcstr.so
-
-include config.mk
+SHARED=libcstr.so.$(VERSION)
 
 all: $(TARGET) $(TARGET)/$(STATIC) $(TARGET)/$(SHARED)
 
